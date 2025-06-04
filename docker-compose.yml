@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: poc-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: poc-db
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - poc-postgres-data:/var/lib/postgresql/data
+
+volumes:
+  poc-postgres-data:
