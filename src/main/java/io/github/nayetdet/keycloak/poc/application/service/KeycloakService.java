@@ -1,6 +1,6 @@
 package io.github.nayetdet.keycloak.poc.application.service;
 
-import io.github.nayetdet.keycloak.poc.application.mapper.UserRepresentationMapper;
+import io.github.nayetdet.keycloak.poc.application.mapper.KeycloakUserMapper;
 import io.github.nayetdet.keycloak.poc.application.payload.request.UserSignUpRequest;
 import io.github.nayetdet.keycloak.poc.application.payload.request.UserUpdateRequest;
 import io.github.nayetdet.keycloak.poc.application.security.context.provider.KeycloakProvider;
@@ -20,11 +20,11 @@ import java.util.function.Predicate;
 public class KeycloakService {
 
     private final KeycloakProvider keycloakProvider;
-    private final UserRepresentationMapper userRepresentationMapper;
+    private final KeycloakUserMapper keycloakUserMapper;
 
     public UserRepresentation signUp(UserSignUpRequest request) {
         var resource = keycloakProvider.getUsersResource();
-        var response = resource.create(userRepresentationMapper.toRepresentation(request));
+        var response = resource.create(keycloakUserMapper.toRepresentation(request));
         if (response.getStatus() != HttpStatus.SC_CREATED) {
             throw switch (response.getStatus()) {
                 case HttpStatus.SC_BAD_REQUEST -> new KeycloakBadRequestException();
@@ -69,7 +69,7 @@ public class KeycloakService {
         keycloakProvider
                 .getUsersResource()
                 .get(keycloakId.toString())
-                .update(userRepresentationMapper.toRepresentation(request));
+                .update(keycloakUserMapper.toRepresentation(request));
     }
 
     public void delete(UUID keycloakId) {

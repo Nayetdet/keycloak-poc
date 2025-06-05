@@ -4,6 +4,8 @@ import io.github.nayetdet.keycloak.poc.application.mapper.UserMapper;
 import io.github.nayetdet.keycloak.poc.application.payload.request.UserSignUpRequest;
 import io.github.nayetdet.keycloak.poc.application.payload.request.UserUpdateRequest;
 import io.github.nayetdet.keycloak.poc.application.payload.response.UserResponse;
+import io.github.nayetdet.keycloak.poc.application.security.context.provider.UserContextProvider;
+import io.github.nayetdet.keycloak.poc.infrastructure.domain.exception.UserModificationForbiddenException;
 import io.github.nayetdet.keycloak.poc.infrastructure.domain.exception.UserNotFoundException;
 import io.github.nayetdet.keycloak.poc.infrastructure.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +44,10 @@ public class UserService {
                 .findByUsername(username)
                 .orElseThrow(UserNotFoundException::new);
 
+        if (UserContextProvider.isUserUnauthorized(user.getKeycloakId())) {
+            throw new UserModificationForbiddenException();
+        }
+
         keycloakService.resendVerifyEmail(user.getKeycloakId());
     }
 
@@ -49,6 +55,10 @@ public class UserService {
         var user = userRepository
                 .findByUsername(username)
                 .orElseThrow(UserNotFoundException::new);
+
+        if (UserContextProvider.isUserUnauthorized(user.getKeycloakId())) {
+            throw new UserModificationForbiddenException();
+        }
 
         keycloakService.resetEmail(user.getKeycloakId());
     }
@@ -58,6 +68,10 @@ public class UserService {
         var user = userRepository
                 .findByUsername(username)
                 .orElseThrow(UserNotFoundException::new);
+
+        if (UserContextProvider.isUserUnauthorized(user.getKeycloakId())) {
+            throw new UserModificationForbiddenException();
+        }
 
         userMapper.updateModel(request, user);
         userRepository.save(user);
@@ -69,6 +83,10 @@ public class UserService {
         var user = userRepository
                 .findByUsername(username)
                 .orElseThrow(UserNotFoundException::new);
+
+        if (UserContextProvider.isUserUnauthorized(user.getKeycloakId())) {
+            throw new UserModificationForbiddenException();
+        }
 
         userRepository.delete(user);
         keycloakService.delete(user.getKeycloakId());

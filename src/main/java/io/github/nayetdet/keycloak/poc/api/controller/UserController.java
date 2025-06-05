@@ -30,7 +30,7 @@ public class UserController implements UserControllerDocs {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/signup")
+    @PostMapping
     public ResponseEntity<UserResponse> signUp(@RequestBody @Valid UserSignUpRequest request) {
         var response = userService.signUp(request);
         var uri = ServletUriComponentsBuilder
@@ -48,21 +48,21 @@ public class UserController implements UserControllerDocs {
         return ResponseEntity.noContent().build();
     }
 
-//    @UserRoleRequired
+    @UserRoleRequired
     @PostMapping("/{username}/reset-email")
     public ResponseEntity<Void> resetEmail(@PathVariable String username) {
         userService.resetEmail(username);
         return ResponseEntity.noContent().build();
     }
 
-//    @UserRoleRequired
+    @UserRoleRequired
     @PutMapping("/{username}")
     public ResponseEntity<Void> update(@PathVariable String username, @RequestBody @Valid UserUpdateRequest request) {
         userService.update(username, request);
         return ResponseEntity.noContent().build();
     }
 
-//    @UserRoleRequired
+    @UserRoleRequired
     @DeleteMapping("/{username}")
     public ResponseEntity<Void> delete(@PathVariable String username) {
         userService.delete(username);

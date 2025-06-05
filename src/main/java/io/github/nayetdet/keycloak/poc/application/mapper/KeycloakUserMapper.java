@@ -6,7 +6,7 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
-public interface UserRepresentationMapper {
+public interface KeycloakUserMapper {
 
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "enabled", constant = "true")
