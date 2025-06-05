@@ -1,7 +1,6 @@
 package io.github.nayetdet.keycloak.poc.api.controller;
 
 import io.github.nayetdet.keycloak.poc.api.controller.docs.UserControllerDocs;
-import io.github.nayetdet.keycloak.poc.application.payload.request.UserSignInRequest;
 import io.github.nayetdet.keycloak.poc.application.payload.request.UserSignUpRequest;
 import io.github.nayetdet.keycloak.poc.application.payload.request.UserUpdateRequest;
 import io.github.nayetdet.keycloak.poc.application.payload.response.UserResponse;
@@ -10,7 +9,6 @@ import io.github.nayetdet.keycloak.poc.application.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.keycloak.representations.AccessTokenResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -32,12 +30,6 @@ public class UserController implements UserControllerDocs {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/signin")
-    public ResponseEntity<AccessTokenResponse> signIn(@RequestBody @Valid UserSignInRequest request) {
-        var response = userService.signIn(request);
-        return ResponseEntity.ok(response);
-    }
-
     @PostMapping("/signup")
     public ResponseEntity<UserResponse> signUp(@RequestBody @Valid UserSignUpRequest request) {
         var response = userService.signUp(request);
@@ -48,6 +40,12 @@ public class UserController implements UserControllerDocs {
                 .toUri();
 
         return ResponseEntity.created(uri).body(response);
+    }
+
+    @PostMapping("/{username}/resend-verify-email")
+    public ResponseEntity<Void> resendVerifyEmail(@PathVariable String username) {
+        userService.resendVerifyEmail(username);
+        return ResponseEntity.noContent().build();
     }
 
     @UserRoleRequired
@@ -71,7 +69,7 @@ public class UserController implements UserControllerDocs {
         return ResponseEntity.noContent().build();
     }
 
-    @UserRoleRequired
+//    @UserRoleRequired
     @DeleteMapping("/{username}")
     public ResponseEntity<Void> delete(@PathVariable String username) {
         userService.delete(username);

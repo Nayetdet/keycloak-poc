@@ -1,6 +1,5 @@
 package io.github.nayetdet.keycloak.poc.api.controller.docs;
 
-import io.github.nayetdet.keycloak.poc.application.payload.request.UserSignInRequest;
 import io.github.nayetdet.keycloak.poc.application.payload.request.UserSignUpRequest;
 import io.github.nayetdet.keycloak.poc.application.payload.request.UserUpdateRequest;
 import io.github.nayetdet.keycloak.poc.application.payload.response.UserResponse;
@@ -10,7 +9,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
-import org.keycloak.representations.AccessTokenResponse;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,26 +35,6 @@ public interface UserControllerDocs {
     ResponseEntity<UserResponse> find(@PathVariable String username);
 
     @Operation(
-            summary = "User sign in",
-            description = "Authenticates a user with their credentials and returns an access token.",
-            tags = "User",
-            responses = {
-                    @ApiResponse(
-                            description = "Successful authentication, returns access token",
-                            responseCode = "200",
-                            content = @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = AccessTokenResponse.class)
-                            )
-                    ),
-                    @ApiResponse(description = "Unauthorized - invalid credentials", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Bad Request - validation errors", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
-            }
-    )
-    ResponseEntity<AccessTokenResponse> signIn(@RequestBody @Valid UserSignInRequest request);
-
-    @Operation(
             summary = "Create a user",
             tags = "User",
             responses = {
@@ -73,6 +51,18 @@ public interface UserControllerDocs {
             }
     )
     ResponseEntity<UserResponse> signUp(@RequestBody @Valid UserSignUpRequest request);
+
+    @Operation(
+            summary = "Resend verification email",
+            description = "Resends the verification email for the specified user if they are not yet verified. Requires user role.",
+            tags = "User",
+            responses = {
+                    @ApiResponse(description = "No Content", responseCode = "204", content = @Content),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
+            }
+    )
+    ResponseEntity<Void> resendVerifyEmail(@PathVariable String username);
 
     @Operation(
             summary = "Reset user email",

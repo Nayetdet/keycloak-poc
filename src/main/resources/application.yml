@@ -24,7 +24,7 @@ keycloak:
   server-url: http://localhost:8080
   realm: keycloak-poc
   client-id: keycloak-poc
-  client-secret: sjIsDWduBz9Smgppc4m7KNmfbPJEaOl0
+  client-secret: sj1uZSIYmHx8PE8fyiRKgJUmAVM2farO
 logging:
   level:
     root: INFO

@@ -1,13 +1,12 @@
 package io.github.nayetdet.keycloak.poc.application.service;
 
 import io.github.nayetdet.keycloak.poc.application.mapper.UserRepresentationMapper;
-import io.github.nayetdet.keycloak.poc.application.payload.request.UserSignInRequest;
 import io.github.nayetdet.keycloak.poc.application.payload.request.UserSignUpRequest;
 import io.github.nayetdet.keycloak.poc.application.payload.request.UserUpdateRequest;
 import io.github.nayetdet.keycloak.poc.application.security.context.provider.KeycloakProvider;
-import io.github.nayetdet.keycloak.poc.infrastructure.domain.exception.KeycloakUserNotFoundException;
+import io.github.nayetdet.keycloak.poc.infrastructure.domain.exception.*;
 import lombok.RequiredArgsConstructor;
-import org.keycloak.representations.AccessTokenResponse;
+import org.apache.http.HttpStatus;
 import org.keycloak.representations.idm.AbstractUserRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.stereotype.Service;
@@ -23,26 +22,40 @@ public class KeycloakService {
     private final KeycloakProvider keycloakProvider;
     private final UserRepresentationMapper userRepresentationMapper;
 
-    public AccessTokenResponse signIn(UserSignInRequest request) {
-        return keycloakProvider
-                .getKeycloak(request.getUsername(), request.getPassword())
-                .tokenManager()
-                .getAccessToken();
-    }
-
     public UserRepresentation signUp(UserSignUpRequest request) {
-        var usersResource = keycloakProvider.getUsersResource();
-        usersResource.create(userRepresentationMapper.toRepresentation(request));
+        var resource = keycloakProvider.getUsersResource();
+        var response = resource.create(userRepresentationMapper.toRepresentation(request));
+        if (response.getStatus() != HttpStatus.SC_CREATED) {
+            throw switch (response.getStatus()) {
+                case HttpStatus.SC_BAD_REQUEST -> new KeycloakBadRequestException();
+                case HttpStatus.SC_CONFLICT -> new KeycloakConflictException();
+                case HttpStatus.SC_FORBIDDEN -> new KeycloakForbiddenException();
+                default -> new KeycloakBadGatewayException();
+            };
+        }
 
-        var userRepresentation = usersResource
+        var representation = resource
                 .searchByUsername(request.getUsername(), true)
                 .stream()
                 .filter(Predicate.not(AbstractUserRepresentation::isEmailVerified))
                 .findFirst()
-                .orElseThrow(KeycloakUserNotFoundException::new);
+                .orElseThrow(KeycloakNotFoundException::new);
 
-        usersResource.get(userRepresentation.getId()).sendVerifyEmail();
-        return userRepresentation;
+        resource.get(representation.getId()).sendVerifyEmail();
+        return representation;
+    }
+
+    public void resendVerifyEmail(UUID keycloakId) {
+        var resource = keycloakProvider.getUsersResource();
+        var representation = resource
+                .get(keycloakId.toString())
+                .toRepresentation();
+
+        if (Boolean.TRUE.equals(representation.isEmailVerified())) {
+            throw new UserAlreadyVerifiedException();
+        }
+
+        resource.get(representation.getId()).sendVerifyEmail();
     }
 
     public void resetEmail(UUID keycloakId) {

@@ -27,12 +27,6 @@ public class UserSignUpRequest {
     @Schema(example = "string@gmail.com")
     private String email;
 
-    @NotBlank
-    @Size(min = 5, max = 255)
-    @Pattern(regexp = "^\\S+$", message = "Password should not contain spaces")
-    @Schema(example = "string")
-    private String password;
-
     @Size(max = 1000)
     private String description;
 

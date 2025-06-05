@@ -13,7 +13,6 @@ public class UserResponse {
     private UUID keycloakId;
     private String username;
     private String displayName;
-    private String email;
     private String description;
 
 }
