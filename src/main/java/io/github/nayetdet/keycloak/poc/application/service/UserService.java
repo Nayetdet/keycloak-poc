@@ -53,14 +53,6 @@ public class UserService {
         keycloakService.resetEmail(user.getKeycloakId());
     }
 
-    public void resetPassword(String username) {
-        var user = userRepository
-                .findByUsername(username)
-                .orElseThrow(UserNotFoundException::new);
-
-        keycloakService.resetPassword(user.getKeycloakId());
-    }
-
     @Transactional
     public void update(String username, UserUpdateRequest request) {
         var user = userRepository

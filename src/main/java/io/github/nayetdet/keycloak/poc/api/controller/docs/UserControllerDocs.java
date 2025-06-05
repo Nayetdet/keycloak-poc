@@ -80,21 +80,6 @@ public interface UserControllerDocs {
     ResponseEntity<Void> resetEmail(@PathVariable String username);
 
     @Operation(
-            summary = "Reset user password",
-            description = "Resets the password of the specified user. Requires user role.",
-            tags = "User",
-            security = @SecurityRequirement(name = "Bearer"),
-            responses = {
-                    @ApiResponse(description = "No Content ", responseCode = "204", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
-            }
-    )
-    ResponseEntity<Void> resetPassword(@PathVariable String username);
-
-    @Operation(
             summary = "Update user data",
             description = "Updates user information for the specified username. Requires user role.",
             tags = "User",

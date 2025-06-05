@@ -48,21 +48,14 @@ public class UserController implements UserControllerDocs {
         return ResponseEntity.noContent().build();
     }
 
-    @UserRoleRequired
+//    @UserRoleRequired
     @PostMapping("/{username}/reset-email")
     public ResponseEntity<Void> resetEmail(@PathVariable String username) {
         userService.resetEmail(username);
         return ResponseEntity.noContent().build();
     }
 
-    @UserRoleRequired
-    @PostMapping("/{username}/reset-password")
-    public ResponseEntity<Void> resetPassword(@PathVariable String username) {
-        userService.resetPassword(username);
-        return ResponseEntity.noContent().build();
-    }
-
-    @UserRoleRequired
+//    @UserRoleRequired
     @PutMapping("/{username}")
     public ResponseEntity<Void> update(@PathVariable String username, @RequestBody @Valid UserUpdateRequest request) {
         userService.update(username, request);

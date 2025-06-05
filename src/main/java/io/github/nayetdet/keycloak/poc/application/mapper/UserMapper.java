@@ -21,7 +21,6 @@ public interface UserMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "keycloakId", ignore = true)
-    @Mapping(target = "email", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     void updateModel(UserUpdateRequest request, @MappingTarget User user);

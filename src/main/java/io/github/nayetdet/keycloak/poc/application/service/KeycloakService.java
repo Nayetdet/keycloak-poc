@@ -65,13 +65,6 @@ public class KeycloakService {
                 .executeActionsEmail(List.of("UPDATE_EMAIL"));
     }
 
-    public void resetPassword(UUID keycloakId) {
-        keycloakProvider
-                .getUsersResource()
-                .get(keycloakId.toString())
-                .executeActionsEmail(List.of("UPDATE_PASSWORD"));
-    }
-
     public void update(UUID keycloakId, UserUpdateRequest request) {
         keycloakProvider
                 .getUsersResource()
