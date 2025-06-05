@@ -1,4 +1,4 @@
-package io.github.nayetdet.keycloak.poc.domain.entity;
+package io.github.nayetdet.keycloak.poc.infrastructure.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
